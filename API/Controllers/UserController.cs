@@ -1,9 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Controllers.interfaces;
+using API.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 
@@ -15,10 +19,11 @@ namespace API.Controllers
     public class UserController : ControllerBase
     {
         private readonly ITokenService _tokenService;
-
-        public UserController(ITokenService tokenService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public UserController(ITokenService tokenService, IHttpContextAccessor httpContextAccessor)
         {
             _tokenService = tokenService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpPost]
@@ -35,7 +40,7 @@ namespace API.Controllers
                 });
             }
 
-            UserDTO user = new UserDTO
+            AuthenticationDTO authentication = new AuthenticationDTO
                     {
                         UserID= 1,
                         UserName = "admin",
@@ -51,9 +56,9 @@ namespace API.Controllers
                 return Ok(new AuthenticationResponseDTO
                 {
                     IsAuthSuccessful = true,
-                    Token = _tokenService.CreateToken(user),
+                    Token = _tokenService.CreateToken(authentication),
                     ExpiresIn = expireTime.ToString("HH:mm:ss tt"),
-                    UserDTO = user
+                    AuthenticationDTO = authentication
                 });
             }
             else{
@@ -68,7 +73,54 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> UserProfile()
         {
-            return Ok("Good");
+            var userId = HttpContext.User?.Claims?.FirstOrDefault(x=>x.Type == ClaimTypes.NameIdentifier)?.Value;
+            if(String.IsNullOrEmpty(userId))
+            {
+                return BadRequest("Token is not valid");
+            }
+            int id = int.Parse(userId);
+
+            UserDTO user = new UserDTO
+            {
+                UserID=id,
+                UserName = "username",
+                FirstName = "Firstname",
+                LastName = "LastName",
+                Email = "Email",
+                Role = "Role"
+            };
+
+            return Ok(user);
+        }
+
+        [HttpGet("{message}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Health(String message)
+        {            
+            return Ok(message);
+        }
+
+        [HttpGet("{message}")]
+        public async Task<IActionResult> UserUiSetUp(string message)
+        {
+            List<UserUISettingDTO> userUISettings = new List<UserUISettingDTO>();
+
+            UserUISettingDTO uISetting = new UserUISettingDTO
+            {
+                ShowMachineLabel = 1,
+                ShowMachineName = 1,
+                CONStatusColor = "00E600",
+                COFFStatusColor = "FF2600",
+                SetupStatusColor = "0433FF",
+                OtherStatusColor = "FF9300",
+                ShowPartCount = 1,
+                ShowOperator = 1
+
+            };
+
+            userUISettings.Add(uISetting);
+
+            return Ok(userUISettings);
         }
     }
 }

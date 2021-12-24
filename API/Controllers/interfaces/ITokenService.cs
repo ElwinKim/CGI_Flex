@@ -8,6 +8,6 @@ namespace API.Controllers.interfaces
 {
     public interface ITokenService
     {
-        string CreateToken(UserDTO userDTO);
+        string CreateToken(AuthenticationDTO authenticationDTO);
     }
 }

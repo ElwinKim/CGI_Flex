@@ -8,6 +8,6 @@ namespace Models
         public string ErrorMessage { get; set; }
         public string Token { get; set; }
         public string ExpiresIn {get; set;}
-        public UserDTO UserDTO { get; set; }
+        public AuthenticationDTO AuthenticationDTO { get; set; }
     }
 }

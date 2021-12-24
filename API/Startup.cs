@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Helper;
 using API.Controllers.interfaces;
 using API.Controllers;
+using Microsoft.AspNetCore.Http;
 
 namespace API
 {
@@ -28,7 +29,7 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             var token = _configruration.GetSection("Token");
-            
+             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddAuthentication(opt => 
             {
@@ -39,6 +40,8 @@ namespace API
             })
             .AddJwtBearer(options =>
             {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,

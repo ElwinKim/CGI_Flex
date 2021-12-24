@@ -20,12 +20,12 @@ namespace API.Controllers
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]));
         }
 
-        public string CreateToken(UserDTO userDTO)
+        public string CreateToken(AuthenticationDTO authenticationDTO)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, userDTO.UserName),
-                new Claim("Id", userDTO.UserID.ToString())
+                new Claim(ClaimTypes.Name, authenticationDTO.UserName),
+                new Claim(ClaimTypes.NameIdentifier, authenticationDTO.UserID.ToString())
             };
             
             
