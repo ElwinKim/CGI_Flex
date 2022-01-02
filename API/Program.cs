@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +15,10 @@ namespace API
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
+            var host = new WebHostBuilder()
+            .UseKestrel()
+            .UseContentRoot(Directory.GetCurrentDirectory())
+            .UseUrls("http://*:5000");
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

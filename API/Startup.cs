@@ -10,6 +10,11 @@ using Microsoft.IdentityModel.Tokens;
 using API.Controllers.interfaces;
 using API.Controllers;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json.Serialization;
+using Microsoft.AspNetCore.DataProtection;
+using System.IO;
 
 namespace API
 {
@@ -29,6 +34,11 @@ namespace API
         {
             var token = _configruration.GetSection("Token");
              services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddCors(o => o.AddPolicy("CSI_FLEX", builder =>
+            {
+                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            }));
+            services.AddMvc();
             services.AddScoped<ITokenService, TokenService>();
             services.AddAuthentication(opt => 
             {
@@ -91,7 +101,7 @@ namespace API
             }
 
             app.UseHttpsRedirection();
-            app.UseCors("CSIFLEX");
+            app.UseCors("CSI_FLEX");
             app.UseRouting();
             
             app.UseAuthentication();

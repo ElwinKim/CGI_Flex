@@ -11,7 +11,6 @@ namespace API.Models
         public String MachineLabel {get; set;}
         public String MachineName {get; set;}
         public String Status {get; set;}
-        public String SetupTime {get; set;}
         public String PartNr {get; set;}
         public String PartMinCy {get; set;}
         public String PartMaxCy {get; set;}
@@ -31,6 +30,6 @@ namespace API.Models
         public int CycleOnTime {get; set;}
         public int CycleOffTime {get; set;}
         public int OthersTime {get; set;}
-
+        public int SetupTime {get; set;}             
     }
 }

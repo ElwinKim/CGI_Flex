@@ -33,17 +33,13 @@ namespace API.Controllers
             if(signInDTO.UserName == null || signInDTO.UserName == "" || 
             signInDTO.Password == null || signInDTO.Password == "")
             {
-                return BadRequest(new AuthenticationResponseDTO
-                {
-                    IsAuthSuccessful = false,
-                    ErrorMessage = "Please enter username and password correctly."
-                });
+                return BadRequest();
             }
 
             AuthenticationDTO authentication = new AuthenticationDTO
                     {
                         UserID= 1,
-                        UserName = "admin",
+                        UserName = "Admin",
                         Role = "Administrator",
                         
                     };
@@ -55,18 +51,15 @@ namespace API.Controllers
                 
                 return Ok(new AuthenticationResponseDTO
                 {
-                    IsAuthSuccessful = true,
+
                     Token = _tokenService.CreateToken(authentication),
                     ExpiresIn = expireTime.ToString("HH:mm:ss tt"),
-                    AuthenticationDTO = authentication
+                    UserID = authentication.UserID,
+                    UserName = authentication.UserName
                 });
             }
             else{
-                return Unauthorized(new AuthenticationResponseDTO
-                {
-                    IsAuthSuccessful = false,
-                    ErrorMessage = "Invalid Authentication"
-                }); 
+                return Unauthorized(); 
             }
         }
 
